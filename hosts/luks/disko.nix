@@ -3,7 +3,7 @@
     disk = {
       nvme1n1 = {
         type = "disk";
-        device = "/dev/disk/by-id/CHANGE-ME";
+        device = "/dev/disk/by-id/REDACTED-NVME-BY-ID";
         content = {
           type = "gpt";
           partitions = {
