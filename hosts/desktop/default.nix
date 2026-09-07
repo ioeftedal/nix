@@ -8,23 +8,25 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ./disko.nix
+    ../../modules/nixos/disko.nix
     ../../modules/nixos
   ];
 
   networking.hostName = "desktop";
   hardware.graphicsAccel = "nvidia";
 
-  system.stateVersion = vars.stateVersion;
+  # Disk chosen at install:  make install HOST=desktop DISK=...
+  # (shared layout in modules/nixos/disko.nix)
 
-  # Swapfile on the encrypted ext4 root — encrypted by virtue of living
-  # inside the LUKS volume.
+  # Desktop: more swap than the shared 8G default.
   swapDevices = [
     {
       device = "/swapfile";
       size = 16384;
     }
   ];
+
+  system.stateVersion = vars.stateVersion;
 
   # After first boot, enroll TPM2 for passwordless unlock:
   #   sudo systemd-cryptenroll --tpm2-device=auto /dev/disk/by-id/YOUR-DISK
