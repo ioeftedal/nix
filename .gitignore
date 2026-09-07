@@ -1,0 +1,28 @@
+# Editor/IDE cruft
+.vscode/
+.idea/
+*.swp
+*.tmp
+
+# Nix build artifacts
+result
+result-*
+.direnv/
+
+# Age / sops private keys must NEVER be committed.
+# The encrypted secrets/secrets.yaml itself IS committed (it's decryptable
+# only with the private key, which lives in ~/.config/sops/age/keys.txt).
+age/keys.txt
+*.agekey
+keys.txt
+
+# Local-only / machine-specific scratch
+.direnv/
+.env
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Internal runbook — keep out of the public repo
+LUKS-REINSTALL.md

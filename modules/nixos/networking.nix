@@ -1,0 +1,70 @@
+{
+  config,
+  vars,
+  ...
+}: {
+  # hostname is set per-host in hosts/<name>/default.nix
+
+  # --- Firewall --------------------------------------------------------------
+  networking.firewall = {
+    enable = true;
+
+    # Tailscale: open UDP 41641 so peers can establish direct (non-relayed)
+    # WireGuard tunnels.  Connections still work via DERP when this port is
+    # blocked, but direct paths are lower-latency.
+    allowedUDPPorts = [41641];
+
+    # SSH is reachable only through the tailnet — never over the LAN.
+    interfaces.tailscale0.allowedTCPPorts = [22];
+  };
+
+  # --- NetworkManager --------------------------------------------------------
+  networking.networkmanager.enable = true;
+  networking.networkmanager.ensureProfiles.environmentFiles = [
+    config.sops.secrets."eduroam.env".path
+  ];
+  networking.networkmanager.ensureProfiles.profiles.eduroam = {
+    connection = {
+      id = "eduroam";
+      type = "wifi";
+    };
+
+    wifi = {
+      mode = "infrastructure";
+      ssid = "eduroam";
+    };
+
+    wifi-security = {
+      key-mgmt = "wpa-eap";
+    };
+
+    "802-1x" = {
+      eap = "peap";
+      identity = vars.email;
+      password = "$EDUROAM_PASSWORD";
+      phase2-auth = "mschapv2";
+
+      # NOTE: campus RADIUS servers widely deploy legacy TLS configs; this
+      # disables certificate verification and lowers the OpenSSL security
+      # level for the 802-1x handshake only (not for HTTPS or other traffic).
+      # Ideal fix: push your campus IT to deploy proper certificates.
+      system-ca-certs = false;
+      openssl-ciphers = "DEFAULT:@SECLEVEL=0";
+    };
+
+    ipv4.method = "auto";
+    ipv6.method = "auto";
+  };
+
+  # --- Secrets ----------------------------------------------------------------
+  # The eduroam Wi-Fi password is encrypted with sops (see .sops.yaml) and
+  # decrypted at boot to /run/secrets/eduroam.env by sops-nix (sops.nix).  No
+  # plaintext secret ever touches /nix/store or /etc.
+  #
+  # To rotate the password:
+  #   nix shell nixpkgs#sops -c sops secrets/secrets.yaml
+  # then `make rebuild`.
+
+  # --- Tailscale mesh VPN ----------------------------------------------------
+  services.tailscale.enable = true;
+}

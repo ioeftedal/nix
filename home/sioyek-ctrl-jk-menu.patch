@@ -1,0 +1,24 @@
+diff --git a/pdf_viewer/ui.cpp b/pdf_viewer/ui.cpp
+index 605a98d..89334bf 100644
+--- a/pdf_viewer/ui.cpp
++++ b/pdf_viewer/ui.cpp
+@@ -1618,6 +1618,19 @@ bool BaseSelectorWidget::eventFilter(QObject* obj, QEvent* event) {
+                     return false;
+                 }
+             }
++            // Vim-style menu navigation: while a menu's filter box is focused,
++            // Ctrl+J moves the selection down and Ctrl+K moves it up, matching
++            // the arrow keys. Plain j/k still type filter text as before.
++            if (key_event->key() == Qt::Key_J && is_control_pressed) {
++                QKeyEvent* new_key_event = new QKeyEvent(key_event->type(), Qt::Key_Down, Qt::KeyboardModifier::NoModifier);
++                QCoreApplication::postEvent(get_view(), new_key_event);
++                return true;
++            }
++            if (key_event->key() == Qt::Key_K && is_control_pressed) {
++                QKeyEvent* new_key_event = new QKeyEvent(key_event->type(), Qt::Key_Up, Qt::KeyboardModifier::NoModifier);
++                QCoreApplication::postEvent(get_view(), new_key_event);
++                return true;
++            }
+             if (key_event->key() == Qt::Key_Down ||
+                 key_event->key() == Qt::Key_Up ||
+                 key_event->key() == Qt::Key_Left ||
