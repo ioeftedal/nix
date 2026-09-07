@@ -67,4 +67,9 @@
 
   # --- Tailscale mesh VPN ----------------------------------------------------
   services.tailscale.enable = true;
+
+  # SSH identity is per-machine: each node enables Tailscale SSH once with
+  # `sudo tailscale up --ssh`, which keeps node-scoped host keys and
+  # authenticates by tailnet identity — no shared sshd keys anywhere.
+  # Declarative-only via manual `tailscale up --ssh` after first boot.
 }

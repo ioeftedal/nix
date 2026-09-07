@@ -58,8 +58,8 @@
     nixosConfigurations = {
       # Current unencrypted host — remove after reimage to LUKS.
       nixos = mkHost ./hosts/nixos;
-      # LUKS-encrypted laptop (Nvidia).  Install from the live USB with
-      # `nixos-install --flake .#luks`.  See LUKS-REINSTALL.md.
+      # LUKS-encrypted laptop (Nvidia).  Reimage the current machine with
+      # `make install HOST=luks DISK=...` from the live USB.  See LUKS-REINSTALL.md.
       luks = mkHost ./hosts/luks;
       # Desktop (Nvidia).
       desktop = mkHost ./hosts/desktop;

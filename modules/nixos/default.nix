@@ -3,6 +3,7 @@
     ./base.nix
     ./desktop.nix
     ./determinate.nix
+    ./encryption.nix
     ./hardware-gpu.nix
     ./networking.nix
     ./nh.nix

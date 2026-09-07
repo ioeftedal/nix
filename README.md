@@ -10,6 +10,10 @@ layout lives in exactly one place and is shared by all encrypted hosts.
 - **One-command install** — `make install HOST=<name> DISK=<device>` wipes,
   partitions, LUKS-encrypts, formats, injects your secrets, and runs
   `nixos-install` in a single declarative step.
+- **Encryption is enforced, not optional** — `make install` refuses any host
+  that doesn't declare LUKS encryption (`hardware.fullDiskEncryption`), and
+  the shared disko layout fails evaluation if `/` isn't on a `/dev/mapper/*`
+  device.
 - **Shared disk layout** — `modules/nixos/disko.nix` holds the layout once;
   every encrypted host uses it.  The target disk is chosen at install time, so
   the same flake installs onto any drive.
@@ -77,6 +81,29 @@ Per-host config is minimal — just a hostname, an optional GPU flag, and a disk
 
 ## Installing an encrypted host
 
+### Quick start
+
+Boot the NixOS minimal ISO, get internet, then:
+
+```console
+git clone https://github.com/ioeftedal/nix.git /tmp/nixos
+cd /tmp/nixos
+# copy the shared sops age key to ~/.config/sops/age/keys.txt first!
+lsblk
+make install HOST=laptop DISK=/dev/disk/by-id/...
+sudo nixos-enter --root /mnt/disko-install-root -- passwd ioe
+reboot
+# after reboot:
+cd ~/nixos && git push
+make ssh-keygen
+sudo tailscale up --ssh
+sudo systemd-cryptenroll --tpm2-device=auto /dev/disk/by-id/...
+```
+
+Pick the right `HOST` (`luks`, `desktop`, or `laptop`) for your machine.
+
+### Full walkthrough
+
 Designed to run from the **NixOS minimal installation ISO** (which ships with
 `git`, `nix`, and networking).  Everything is automated behind `make install`.
 
@@ -103,14 +130,18 @@ ping -c 2 github.com
 
 ### 2. Clone the repo
 
+Clone over **HTTPS** (default — works from a fresh ISO with no keys; enter
+your GitHub username and a Personal Access Token when prompted):
+
 ```console
-git clone git@github.com:ioeftedal/nix.git
+git clone https://github.com/ioeftedal/nix.git
 cd nix
 ```
 
-> If you don't have SSH keys on the ISO, clone over HTTPS instead:
-> `git clone https://github.com/ioeftedal/nix.git`.  (`make install` adds SSH
-> keys back onto the installed system from `~/.ssh`.)
+> SSH keys are per-machine (generated after first boot with `make
+> ssh-keygen`), so the clone method on the ISO doesn't matter.  If you already
+> have keys on the ISO, `git clone git@github.com:ioeftedal/nix.git` works
+> too.
 
 ### 3. One command: partition + encrypt + install
 
@@ -134,7 +165,8 @@ This runs `disko-install`, which for `HOST=luks` on `DISK` does all of:
 1. wipes the disk and creates a GPT layout (1G EFI + LUKS2 partition),
 2. prompts for a **strong LUKS passphrase** and encrypts,
 3. creates the ext4 root and mounts everything,
-4. injects the sops age key, SSH keys, and tailscale state,
+4. injects the shared sops age key and tailscale state (SSH keys are
+   per-machine and generated after first boot),
 5. runs `nixos-install`, and
 6. writes the EFI boot entries.
 
@@ -146,6 +178,14 @@ This runs `disko-install`, which for `HOST=luks` on `DISK` does all of:
 sudo nixos-enter --root /mnt/disko-install-root -- passwd ioe
 
 reboot
+```
+
+After reboot, on the new system:
+
+```console
+cd ~/nixos && git push && sudo ln -sfn /home/ioe/nixos /etc/nixos
+make ssh-keygen            # this machine's OWN ssh key (per-machine)
+sudo tailscale up --ssh    # per-node ssh identity on the tailnet
 ```
 
 ### 5. Optional: TPM2 auto-unlock
@@ -217,6 +257,8 @@ sudo nixos-rebuild switch --flake /home/ioe/nixos#<name>
 - `secrets/secrets.yaml` is **encrypted** and committed.
 - Decryption requires the private age key at
   `~/.config/sops/age/keys.txt`, which is **gitignored** and never pushed.
+- One **shared** age key is used on every machine — carry the same `keys.txt`
+  onto each install.  (SSH keys are the opposite: per-machine.)
 - **Losing the age key makes secrets undecryptable** — back it up offline.
 
 ---
@@ -228,5 +270,9 @@ sudo nixos-rebuild switch --flake /home/ioe/nixos#<name>
   `desktop` / `laptop`).
 - The disk device is deliberately **not** hardcoded in the config; it is always
   passed explicitly at install time to prevent wiping the wrong disk.
+- Every install is guaranteed **LUKS-encrypted**: `make install` refuses hosts
+  without `hardware.fullDiskEncryption`, and the shared disko layout
+  (`modules/nixos/disko.nix`) fails evaluation if the root isn't a LUKS
+  mapping.
 - `system.stateVersion` is set from `variables.nix` and should not be bumped
   casually.

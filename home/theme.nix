@@ -15,7 +15,7 @@
 in {
   options.theme = lib.mkOption {
     type = lib.types.enum (lib.attrNames themes);
-    default = "nord";
+    default = "miasma";
     description = "Active color theme. One of: ${lib.concatStringsSep ", " (lib.attrNames themes)}.";
   };
 
