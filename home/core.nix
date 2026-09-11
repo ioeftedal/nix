@@ -35,6 +35,10 @@
 
   programs.bash = {
     enable = true;
+    shellAliases = {
+      ls="eza -l --icons";
+      la="eza -la --icons";
+    };
   };
 
   programs.tmux = {
