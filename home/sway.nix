@@ -164,12 +164,12 @@ in {
     bindsym XF86AudioLowerVolume exec swayosd-client --output-volume -5
     bindsym XF86AudioMute exec swayosd-client --output-volume mute-toggle
     bindsym XF86AudioMicMute exec swayosd-client --input-volume mute-toggle
-    bindsym XF86MonBrightnessUp exec swayosd-client --brightness +5
-    bindsym XF86MonBrightnessDown exec swayosd-client --brightness -5
-    bindsym Shift+XF86MonBrightnessUp exec swayosd-client --brightness +100
-    bindsym Shift+XF86MonBrightnessDown exec swayosd-client --brightness -100
-    bindsym Alt+XF86MonBrightnessUp exec swayosd-client --brightness +1
-    bindsym Alt+XF86MonBrightnessDown exec swayosd-client --brightness -1
+    bindsym XF86MonBrightnessUp exec swayosd-client --device intel_backlight --brightness +5
+    bindsym XF86MonBrightnessDown exec swayosd-client --device intel_backlight --brightness -5
+    bindsym Shift+XF86MonBrightnessUp exec swayosd-client --device intel_backlight --brightness +100
+    bindsym Shift+XF86MonBrightnessDown exec swayosd-client --device intel_backlight --brightness -100
+    bindsym Alt+XF86MonBrightnessUp exec swayosd-client --device intel_backlight --brightness +1
+    bindsym Alt+XF86MonBrightnessDown exec swayosd-client --device intel_backlight --brightness -1
     bindsym Alt+XF86AudioRaiseVolume exec swayosd-client --output-volume +1
     bindsym Alt+XF86AudioLowerVolume exec swayosd-client --output-volume -1
     bindsym XF86AudioNext exec swayosd-client --playerctl next

@@ -10,6 +10,7 @@
   # needed.
   home.packages = with pkgs; [
     swayosd
+    brightnessctl
     playerctl
   ];
 }

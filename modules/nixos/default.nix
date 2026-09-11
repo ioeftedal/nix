@@ -4,6 +4,7 @@
     ./desktop.nix
     ./determinate.nix
     ./encryption.nix
+    ./hardware-backlight.nix
     ./hardware-gpu.nix
     ./networking.nix
     ./nh.nix
