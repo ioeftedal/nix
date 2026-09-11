@@ -31,6 +31,7 @@ in {
     input type:pointer {
         accel_profile flat
         pointer_accel 0
+        natural_scroll enabled
     }
 
     input type:touchpad {
@@ -48,6 +49,11 @@ in {
 
     output * bg ${c.wallpaper} fill
     output * scale 1.2
+    # Both external monitors are 2560x1440 at scale 1.2 -> 2133 logical px wide.
+    # DP-6 is left (pos 0 0), DP-8 is right (pos 2133 0). Positions are in
+    # logical pixels; the two must not overlap or windows will bleed across.
+    output DP-6 pos 0 0
+    output DP-8 pos 2133 0
 
     # Appearance
     default_border pixel 2
@@ -123,6 +129,10 @@ in {
     set $ws8  8
     set $ws9  9
     set $ws10 10
+
+    workspace 1 output DP-6
+    workspace 2 output DP-8
+    workspace 0 output eDP-1
 
     bindsym $mod+1 workspace number $ws1
     bindsym $mod+2 workspace number $ws2
