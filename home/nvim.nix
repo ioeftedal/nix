@@ -19,7 +19,7 @@ in {
         name = "aether",
         priority = 1000,
         opts = {
-          -- Ghostty/waybar own the 16-color terminal palette; aether must not
+          -- Ghostty owns the 16-color terminal palette; aether must not
           -- stomp it (same fix as the miasma.nvim term_colors=false).
           terminal_colors = false,
           colors = {

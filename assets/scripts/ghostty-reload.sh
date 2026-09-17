@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Theme switch handler for $mod+Shift+c.
 #
-# Reloads the (rebuilt) sway config so waybar / wallpaper / borders pick up
+# Reloads the (rebuilt) sway config so wallpaper / borders pick up
 # the new palette, then retheme every running Ghostty window by injecting
 # ghostty's built-in `reload_config` keybinding (ctrl+shift+,) while each
 # surface is focused. Requires wtype (sway's virtual keyboard protocol).
