@@ -6,9 +6,6 @@
 }: {
   # 1Password
   programs._1password.enable = true;
-  programs._1password-gui = {
-    enable = true;
-  };
 
   # SSH.  Socket-activated (only listens while a connection is being made),
   # key-based auth only, and reachable solely via the tailnet (see the
