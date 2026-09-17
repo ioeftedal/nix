@@ -27,6 +27,11 @@ in {
     executable = true;
   };
 
+  home.file."bin/osd" = {
+    source = mkDot "scripts/osd.sh";
+    executable = true;
+  };
+
   xdg.configFile."sway/config".text = ''
     input type:pointer {
         accel_profile flat
@@ -87,9 +92,7 @@ in {
 
     exec ghostty
     exec dunst
-    exec swayosd-server
     exec wlsunset -l 54.0 -L -1.0
-    exec_always bash -c 'pkill waybar 2>/dev/null; sleep 0.2; exec waybar -c ~/.config/waybar/config-sway.jsonc'
     exec firefox
 
     # Modifier
@@ -170,22 +173,22 @@ in {
     bindsym --whole-window $mod+button5 workspace prev
 
     # Media keys
-    bindsym XF86AudioRaiseVolume exec swayosd-client --output-volume +5
-    bindsym XF86AudioLowerVolume exec swayosd-client --output-volume -5
-    bindsym XF86AudioMute exec swayosd-client --output-volume mute-toggle
-    bindsym XF86AudioMicMute exec swayosd-client --input-volume mute-toggle
-    bindsym XF86MonBrightnessUp exec swayosd-client --device intel_backlight --brightness +5
-    bindsym XF86MonBrightnessDown exec swayosd-client --device intel_backlight --brightness -5
-    bindsym Shift+XF86MonBrightnessUp exec swayosd-client --device intel_backlight --brightness +100
-    bindsym Shift+XF86MonBrightnessDown exec swayosd-client --device intel_backlight --brightness -100
-    bindsym Alt+XF86MonBrightnessUp exec swayosd-client --device intel_backlight --brightness +1
-    bindsym Alt+XF86MonBrightnessDown exec swayosd-client --device intel_backlight --brightness -1
-    bindsym Alt+XF86AudioRaiseVolume exec swayosd-client --output-volume +1
-    bindsym Alt+XF86AudioLowerVolume exec swayosd-client --output-volume -1
-    bindsym XF86AudioNext exec swayosd-client --playerctl next
-    bindsym XF86AudioPause exec swayosd-client --playerctl play-pause
-    bindsym XF86AudioPlay exec swayosd-client --playerctl play-pause
-    bindsym XF86AudioPrev exec swayosd-client --playerctl previous
+    bindsym XF86AudioRaiseVolume exec ${config.home.homeDirectory}/bin/osd vol +5
+    bindsym XF86AudioLowerVolume exec ${config.home.homeDirectory}/bin/osd vol -5
+    bindsym XF86AudioMute exec ${config.home.homeDirectory}/bin/osd vol mute
+    bindsym XF86AudioMicMute exec ${config.home.homeDirectory}/bin/osd mic
+    bindsym XF86MonBrightnessUp exec ${config.home.homeDirectory}/bin/osd bright +5
+    bindsym XF86MonBrightnessDown exec ${config.home.homeDirectory}/bin/osd bright -5
+    bindsym Shift+XF86MonBrightnessUp exec ${config.home.homeDirectory}/bin/osd bright +100
+    bindsym Shift+XF86MonBrightnessDown exec ${config.home.homeDirectory}/bin/osd bright -100
+    bindsym Alt+XF86MonBrightnessUp exec ${config.home.homeDirectory}/bin/osd bright +1
+    bindsym Alt+XF86MonBrightnessDown exec ${config.home.homeDirectory}/bin/osd bright -1
+    bindsym Alt+XF86AudioRaiseVolume exec ${config.home.homeDirectory}/bin/osd vol +1
+    bindsym Alt+XF86AudioLowerVolume exec ${config.home.homeDirectory}/bin/osd vol -1
+    bindsym XF86AudioNext exec ${config.home.homeDirectory}/bin/osd next
+    bindsym XF86AudioPause exec ${config.home.homeDirectory}/bin/osd play-pause
+    bindsym XF86AudioPlay exec ${config.home.homeDirectory}/bin/osd play-pause
+    bindsym XF86AudioPrev exec ${config.home.homeDirectory}/bin/osd previous
 
     # Reload config / apply theme switch (reloads sway + rethemes ghostty)
     bindsym $mod+Shift+c exec ${config.home.homeDirectory}/bin/ghostty-reload

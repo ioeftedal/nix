@@ -15,7 +15,6 @@
     ./sway.nix
     ./media.nix
     ./nvim.nix
-    ./waybar.nix
     ./sioyek.nix
     ./theme.nix
   ];
