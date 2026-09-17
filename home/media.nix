@@ -4,12 +4,10 @@
   pkgs,
   ...
 }: {
-  # swayosd provides the OSD overlay (swayosd-server) plus the client used by
-  # the media-key binds in the sway config (see sway.nix). Volume/brightness/
-  # mute are bound directly to `swayosd-client`, so no shell wrappers are
-  # needed.
+  # OSD is handled by the minimal bin/osd script (see sway.nix): volume/mute
+  # go through wpctl (PipeWire), brightness through brightnessctl, and player
+  # controls through playerctl, all rendering as dunst notifications.
   home.packages = with pkgs; [
-    swayosd
     brightnessctl
     playerctl
   ];
