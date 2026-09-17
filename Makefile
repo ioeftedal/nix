@@ -40,13 +40,26 @@ default: rebuild
 
 ## install — wipe + reclaim + LUKS-encrypt + format + install HOST onto DISK (⚠ wipes DISK)
 install:
-	@test "$(DISK)" != "/dev/disk/by-id/CHANGE-ME" || { echo "DISK not set — run: make install HOST=$(HOST) DISK=/dev/disk/by-id/<disk>"; exit 1; }
-	@test "$$(nix eval .#nixosConfigurations.$(HOST).config.hardware.fullDiskEncryption 2>/dev/null)" = "true" || { echo "$(HOST) does not declare LUKS encryption — refusing to install (all installs must be encrypted)"; exit 1; }
+	@test "$(DISK)" != "/dev/disk/by-id/CHANGE-ME" || { \
+		echo "DISK not set — run: make install HOST=$(HOST) DISK=/dev/disk/by-id/<disk>"; \
+		exit 1; \
+	}
+	@test "$$(nix eval .#nixosConfigurations.$(HOST).config.hardware.fullDiskEncryption 2>/dev/null)" = "true" || { \
+		echo "$(HOST) does not declare LUKS encryption — refusing to install (all installs must be encrypted)"; \
+		exit 1; \
+	}
 	@echo "⚠  This DESTROYS $(DISK) and reinstalls $(HOST) on it. Type $(HOST) to continue:"
-	@read -r c; test "$$c" = "$(HOST)" || { echo "aborted"; exit 1; }
+	@read -r c
+	@test "$$c" = "$(HOST)" || { \
+		echo "aborted"; \
+		exit 1; \
+	}
 	mkdir -p $(HOME)/.config/sops/age
 	sudo mkdir -p /var/lib/tailscale
-	@test -f $(AGE_KEY) || { echo "no age key at $(AGE_KEY) — copy the shared key here (same one on every machine)"; exit 1; }
+	@test -f $(AGE_KEY) || { \
+		echo "no age key at $(AGE_KEY) — copy the shared key here (same one on every machine)"; \
+		exit 1; \
+	}
 	sudo -E nix run github:nix-community/disko/latest#disko-install -- \
 		--flake .#$(HOST) --disk main $(DISK) \
 		--extra-files $(AGE_KEY) /home/ioe/.config/sops/age/keys.txt \
@@ -57,17 +70,20 @@ install:
 
 ## install-no-secrets — same as install but without injecting the shared age key (restore it yourself)
 install-no-secrets:
-	@test "$$(nix eval .#nixosConfigurations.$(HOST).config.hardware.fullDiskEncryption 2>/dev/null)" = "true" || { echo "$(HOST) does not declare LUKS encryption — refusing to install (all installs must be encrypted)"; exit 1; }
+	@test "$$(nix eval .#nixosConfigurations.$(HOST).config.hardware.fullDiskEncryption 2>/dev/null)" = "true" || { \
+		echo "$(HOST) does not declare LUKS encryption — refusing to install (all installs must be encrypted)"; \
+		exit 1; \
+	}
 	sudo nix run github:nix-community/disko/latest#disko-install -- \
-		--flake .#$(HOST) --disk main $(DISK) --write-efi-boot-entries
+	  --flake .#$(HOST) --disk main $(DISK) --write-efi-boot-entries
 
 ## gen-key — rotate/mint the sops age key (prints its public key; only for a deliberate shared-key rotation)
 gen-key:
-	mkdir -p $(dir $(AGE_KEY))
-	@test -f $(AGE_KEY) || nix shell nixpkgs#age -c age-keygen -o $(AGE_KEY)
+	mkdir -p$(dir $(AGE_KEY))
+	@test -f $(AGE_KEY) || nix shell nixpkgs#age -c age-keygen -o$(AGE_KEY)
 	@echo "age key:        $(AGE_KEY)"
 	@echo "public key:"
-	nix shell nixpkgs#age -c age-keygen -y $(AGE_KEY)
+	nix shell nixpkgs#age -c age-keygen -y$(AGE_KEY)
 	@echo "Add it to .sops.yaml (keys and key_groups) and run 'make refresh-secrets'."
 
 ## refresh-secrets — re-encrypt/create secrets/secrets.yaml with the .sops.yaml keys
@@ -86,12 +102,12 @@ ssh-keygen:
 ## mount — only mount DISK at /mnt/disko-install-root (no wipe, no install)
 mount:
 	sudo nix run github:nix-community/disko/latest#disko-install -- \
-		--flake .#$(HOST) --disk main $(DISK) --mode mount
+	  --flake .#$(HOST) --disk main $(DISK) --mode mount
 
 ## dry-run — preview the exact install commands without touching anything
 dry-run:
 	nix run github:nix-community/disko/latest#disko-install -- \
-		--flake .#$(HOST) --disk main $(DISK) --dry-run
+	  --flake .#$(HOST) --disk main $(DISK) --dry-run
 
 ## check — evaluate every host configuration
 check:
