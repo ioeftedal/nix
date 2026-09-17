@@ -20,6 +20,11 @@
   # Browser
   programs.firefox.enable = true;
 
+  # No xdg-desktop-portal daemon: saves ~140 MiB net (portal core, flatpak,
+  # geoclue, gpsd cascade).  Firefox keeps its own GTK file dialogs; the
+  # tradeoff is no Wayland screen-cast for browser video meetings.
+  xdg.portal.enable = lib.mkForce false;
+
   # Prevent speech-dispatcher (and mbrola-voices ~645 MB) from being pulled in
   services.speechd.enable = false;
 
@@ -27,9 +32,7 @@
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    alsa.support32Bit = true;
     pulse.enable = true;
-    jack.enable = true;
 
     wireplumber.extraConfig."10-enable-usb-audio" = {
       "monitor.alsa.rules" = [
