@@ -10,7 +10,9 @@
 # can `nix run nix-darwin -- switch --flake .#macbook`, or build the config
 # from any machine with `make build-darwin`.
 
-HOST ?= desktop
+# Machine to target: defaults to the current machine's hostname, which matches
+# the per-machine config names (desktop, laptop).  Override with HOST=...
+HOST ?= $(shell hostname -s)
 
 # Per-machine SSH keys.  Empty by default — every computer generates its own
 # key (`make ssh-keygen` after boot) so they are never shared.
