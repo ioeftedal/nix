@@ -4,7 +4,7 @@
 {
   name = "fire-and-shadow";
 
-  wallpaper = "/home/ioe/Pictures/wallpapers/fire-and-shadow.jpg";
+  wallpaper = ../../assets/wallpapers/wallpaper.jpg;
 
   # Core surfaces & text
   bg = "#090704"; # terminal/primary background

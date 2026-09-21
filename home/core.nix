@@ -16,6 +16,12 @@
     ripgrep
     tree
     wget
+    sl
+    # C toolchain: nvim-treesitter compiles its parsers with `cc`/`make` at
+    # Neovim startup (fails with "No such file or directory (os error 2)" if absent).
+    gcc
+    gnumake
+    pkg-config
   ];
 
   programs.direnv.enable = true;
@@ -36,8 +42,8 @@
   programs.bash = {
     enable = true;
     shellAliases = {
-      ls="eza -l --icons";
-      la="eza -la --icons";
+      ls = "eza -l --icons";
+      la = "eza -la --icons";
     };
   };
 
@@ -49,5 +55,4 @@
       set -g history-limit 10000
     '';
   };
-
 }

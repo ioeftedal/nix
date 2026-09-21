@@ -4,7 +4,7 @@
 {
   name = "nord";
 
-  wallpaper = "/home/ioe/Pictures/wallpapers/nord.jpg";
+  wallpaper = ../../assets/wallpapers/wallpaper.jpg;
 
   # Core surfaces & text
   bg = "#2E3440"; # terminal/primary background (nord0)

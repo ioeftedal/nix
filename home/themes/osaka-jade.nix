@@ -4,7 +4,7 @@
 {
   name = "osaka-jade";
 
-  wallpaper = "/home/ioe/Pictures/wallpapers/osaka-jade-bg.jpg";
+  wallpaper = ../../assets/wallpapers/wallpaper.jpg;
 
   # Core surfaces & text
   bg = "#111c18"; # terminal/primary background

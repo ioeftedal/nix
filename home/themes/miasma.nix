@@ -4,7 +4,7 @@
 {
   name = "miasma";
 
-  wallpaper = "/home/ioe/Pictures/wallpapers/miasma.jpg";
+  wallpaper = ../../assets/wallpapers/wallpaper.jpg;
 
   # Core surfaces & text
   bg = "#222222"; # terminal/primary background
