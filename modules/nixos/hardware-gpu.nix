@@ -18,9 +18,10 @@
     hardware.graphics.enable = true;
 
     hardware.nvidia = {
-      open = true;
-      modesetting.enable = true;
-      powerManagement.enable = true;
+      package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
+      open = false;
+      # modesetting.enable = true;
+      # powerManagement.enable = true;
     };
 
     # services.xserver is not enabled (sway/Wayland only), so the nvidia

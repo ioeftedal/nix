@@ -1,5 +1,5 @@
 {
-  description = "ioe's NixOS configuration";
+  description = "ioe's NixOS + nix-darwin configuration";
 
   inputs = {
     nixpkgs = {
@@ -15,59 +15,45 @@
       url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     };
 
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-    };
-
-    disko = {
-      url = "github:nix-community/disko/latest";
+    darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    disko,
-    ...
-  } @ inputs: let
-    system = "x86_64-linux";
-    vars = import ./variables.nix;
-    pkgs = nixpkgs.legacyPackages.${system};
+  outputs = {nixpkgs, ...} @ inputs: let
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-    # Modules every host pulls in; hosts only add their own directory.
-    sharedModules = [
-      disko.nixosModules.disko
-      home-manager.nixosModules.home-manager
-      inputs.determinate.nixosModules.default
-      inputs.sops-nix.nixosModules.sops
-    ];
-
-    mkHost = hostDir:
-      nixpkgs.lib.nixosSystem {
-        inherit system;
-
-        specialArgs = {
-          inherit inputs vars;
-        };
-
-        modules = [hostDir] ++ sharedModules;
-      };
+    # A single entry point for every machine: NixOS or nix-darwin, chosen and
+    # wired up in lib/mksystem.nix (see there).  Machines only add a hostname
+    # and hardware config; everything else is shared per-OS / per-user.
+    mkSystem = import ./lib/mksystem.nix {
+      inherit nixpkgs inputs;
+    };
   in {
     nixosConfigurations = {
-      # Current unencrypted host — remove after reimage to LUKS.
-      nixos = mkHost ./hosts/nixos;
-      # LUKS-encrypted laptop (Nvidia).  Reimage the current machine with
-      # `make install HOST=luks DISK=...` from the live USB.  See LUKS-REINSTALL.md.
-      luks = mkHost ./hosts/luks;
-      # Desktop (Nvidia).
-      desktop = mkHost ./hosts/desktop;
+      # Current AMD Ryzen + Nvidia workstation.
+      desktop = mkSystem "desktop" {
+        system = "x86_64-linux";
+        user = "ioe";
+      };
       # Laptop (no discrete GPU).
-      laptop = mkHost ./hosts/laptop;
+      laptop = mkSystem "laptop" {
+        system = "x86_64-linux";
+        user = "ioe";
+      };
     };
 
-    devShells.${system}.default = pkgs.mkShell {
+    darwinConfigurations = {
+      # macOS placeholder — grow machines/macbook.nix + users/ioe/darwin.nix.
+      macbook = mkSystem "macbook" {
+        system = "aarch64-darwin";
+        user = "ioe";
+        darwin = true;
+      };
+    };
+
+    devShells.x86_64-linux.default = pkgs.mkShell {
       packages = with pkgs; [
         clang
         pkg-config
@@ -75,6 +61,6 @@
       ];
     };
 
-    formatter.${system} = pkgs.alejandra;
+    formatter.x86_64-linux = pkgs.alejandra;
   };
 }
