@@ -14,15 +14,13 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  # Placeholder layout so the system builds.  Label the disks at install time
-  # (`mkfs.ext4 -L nixos`, `mkfs.vfat -n boot`), or regenerate this file.
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
     fsType = "ext4";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-label/boot";
+    device = "/dev/disk/by-label/BOOT";
     fsType = "vfat";
     options = ["fmask=0077" "dmask=0077"];
   };
