@@ -12,12 +12,14 @@
     ./hardware/laptop.nix
   ];
 
-  # sway is a laptop-only environment: the desktop doesn't run a WM/compositor.
+  # sway + its browser are laptop-only: the desktop doesn't run a WM/compositor.
   programs.sway = {
     enable = true;
     # xwayland.enable = true;
     extraPackages = [];
   };
+
+  programs.firefox.enable = true;
 
   networking.hostName = "laptop";
 
