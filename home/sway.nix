@@ -78,7 +78,7 @@ in {
     workspace_auto_back_and_forth yes
 
     # Window commands
-    for_window [class="^$"][title="^$"][app_id="^$"][app_id=".*xwayland.*"] no_focus
+    # for_window [class="^$"][title="^$"][app_id="^$"][app_id=".*xwayland.*"] no_focus
 
     # Autostart (skip cursor commands handled by home-manager / XDGConfig)
     exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
@@ -93,7 +93,6 @@ in {
     exec ghostty
     exec dunst
     exec wlsunset -l 54.0 -L -1.0
-    exec firefox
 
     # Modifier
     set $mod Super
@@ -102,7 +101,6 @@ in {
     bindsym $mod+Return exec ghostty
     bindsym $mod+Space exec fuzzel
     bindsym $mod+R exec fuzzel
-    bindsym $mod+Shift+Return exec firefox
     bindsym $mod+W kill
     bindsym $mod+F fullscreen
     bindsym $mod+V floating toggle

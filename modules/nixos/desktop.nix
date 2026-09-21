@@ -5,20 +5,11 @@
   vars,
   ...
 }: {
-  programs.sway = {
-    enable = true;
-    xwayland.enable = true;
-    extraPackages = [];
-  };
-
   # Keyboard layout
   services.xserver.xkb = {
     layout = vars.keyLayout;
     options = vars.keyOptions;
   };
-
-  # Browser
-  programs.firefox.enable = true;
 
   # No xdg-desktop-portal daemon: saves ~140 MiB net (portal core, flatpak,
   # geoclue, gpsd cascade).  Firefox keeps its own GTK file dialogs; the
