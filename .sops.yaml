@@ -1,7 +1,0 @@
-keys:
-  - &ioe age1ert2zlux54234cv5u8nxjqkt4ycgl8dqu9nze27t90ck6vz2svpsqtlm2v
-creation_rules:
-  - path_regex: secrets/secrets.yaml
-    key_groups:
-      - age:
-          - *ioe

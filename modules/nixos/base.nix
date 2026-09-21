@@ -25,15 +25,17 @@
   };
 
   # --- System-wide package policy ------------------------------------------
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [
-      "1password"
-      "1password-cli"
-      "nvidia-x11"
-      "nvidia-settings"
-      "nvidia-vaapi-driver"
-      "nvidia-persistenced"
-    ];
+  # nixpkgs.config.allowUnfreePredicate = pkg:
+  #   builtins.elem (lib.getName pkg) [
+  #     "1password"
+  #     "1password-cli"
+  #     "nvidia-x11"
+  #     "nvidia-settings"
+  #     "nvidia-vaapi-driver"
+  #     "nvidia-persistenced"
+  #   ];
+
+  nixpkgs.config.allowUnfree = true;
 
   # --- Locale / time --------------------------------------------------------
   time.timeZone = vars.timeZone;
@@ -61,7 +63,8 @@
 
   # --- Firmware (minimal) ----------------------------------------------------
   # Only the firmware this machine actually loads: MediaTek MT7925 wifi
-  # (mediatek), Intel i915 GPU + Intel BT (intel), SOF audio (own pkg).
+  # (mediatek, top-level iwlwifi-cc-a0-*.ucode for the Intel AX200/211 variant),
+  # Intel i915 GPU + Intel BT (intel), SOF audio (own pkg).
   # Filtering linux-firmware (837 MiB) + legacy sets (zd1211, ipw2200, rtl*,
   # alsa, libreelec-dvb) saves ~0.7 GiB.  Nvidia GSP + intel-npu firmware are
   # added by their own modules and are unaffected by this override.
@@ -71,12 +74,13 @@
   hardware.firmware = [
     (
       pkgs.runCommand "linux-firmware-minimal" {}
-        ''
-          mkdir -p $out/lib/firmware
-          for d in intel i915 mediatek; do
-            cp -rL "${pkgs.linux-firmware}/lib/firmware/$d" "$out/lib/firmware/"
-          done
-        ''
+      ''
+        mkdir -p $out/lib/firmware
+        for d in intel i915 mediatek; do
+          cp -rL "${pkgs.linux-firmware}/lib/firmware/$d" "$out/lib/firmware/"
+        done
+        cp -rL ${pkgs.linux-firmware}/lib/firmware/iwlwifi-cc-a0-*.ucode "$out/lib/firmware/"
+      ''
     )
     pkgs.sof-firmware
   ];
