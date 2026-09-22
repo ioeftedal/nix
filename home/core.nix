@@ -19,6 +19,7 @@
     tree
     wget
     sl
+    ollama
     # C toolchain: nvim-treesitter compiles its parsers with `cc`/`make` at
     # Neovim startup (fails with "No such file or directory (os error 2)" if absent).
     gcc

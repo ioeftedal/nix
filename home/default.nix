@@ -27,6 +27,9 @@ in {
       ./media.nix
       ./sioyek.nix
       ./sway.nix
+    ]
+    ++ lib.optionals (currentSystemName == "desktop") [
+      ./hermes.nix
     ];
 
   home.stateVersion = vars.stateVersion;
