@@ -15,6 +15,3 @@ result-*
 # OS cruft
 .DS_Store
 Thumbs.db
-
-# Internal runbook — keep out of the public repo
-LUKS-REINSTALL.md
