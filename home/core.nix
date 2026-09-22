@@ -8,6 +8,8 @@
   home.packages = with pkgs; [
     git
     git-get
+    sops
+    age
     btop
     fetch
     eza

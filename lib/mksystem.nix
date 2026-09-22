@@ -84,8 +84,9 @@ in
           };
         }
       ]
-      # NixOS-only inputs/modules; nix-darwin machines skip determinate.
+      # NixOS-only inputs/modules; nix-darwin machines skip determinate/sops.
       ++ optionals (!isDarwin) [
         inputs.determinate.nixosModules.default
+        inputs.sops-nix.nixosModules.sops
       ];
   }

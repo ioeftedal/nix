@@ -9,6 +9,7 @@
     ./nh.nix
     ./nix-ld.nix
     ./security.nix
+    ./sops.nix
     ./users.nix
   ];
 }

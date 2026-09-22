@@ -1,6 +1,5 @@
 {
   config,
-  vars,
   ...
 }: {
   # hostname is set per machine in machines/<name>.nix
@@ -20,6 +19,10 @@
 
   # --- NetworkManager --------------------------------------------------------
   networking.networkmanager.enable = true;
+  networking.networkmanager.ensureProfiles.environmentFiles = [
+    config.sops.secrets."eduroam.env".path
+    config.sops.secrets."eduroam.identity".path
+  ];
   networking.networkmanager.ensureProfiles.profiles.eduroam = {
     connection = {
       id = "eduroam";
@@ -37,7 +40,7 @@
 
     "802-1x" = {
       eap = "peap";
-      identity = vars.email;
+      identity = "$EDUROAM_IDENTITY";
       password = "$EDUROAM_PASSWORD";
       phase2-auth = "mschapv2";
 
@@ -54,11 +57,13 @@
   };
 
   # --- Secrets ----------------------------------------------------------------
-  # No secret management in this repo anymore (sops-nix was removed).  The
-  # eduroam profile below needs the password exported into NetworkManager's
-  # environment; without a secret provider the profile won't connect.  Either
-  # configure eduroam manually (nmcli GUI) or reintroduce a secret backend
-  # (e.g. sops-nix) if you want this declarative again.
+  # The eduroam Wi-Fi password is encrypted with sops (see .sops.yaml) and
+  # decrypted at boot to /run/secrets/eduroam.env by sops-nix (sops.nix).  No
+  # plaintext secret ever touches /nix/store or /etc.
+  #
+  # To rotate the password:
+  #   nix shell nixpkgs#sops -c sops secrets/secrets.yaml
+  # then `make rebuild`.
 
   # --- Tailscale mesh VPN ----------------------------------------------------
   services.tailscale.enable = true;

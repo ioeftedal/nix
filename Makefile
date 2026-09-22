@@ -18,7 +18,11 @@ HOST ?= $(shell hostname -s)
 # key (`make ssh-keygen` after boot) so they are never shared.
 SSH_SRC ?=
 
-.PHONY: switch check build build-darwin rebuild update help ssh-keygen
+# sops age key — shared across every machine.  Secrets/secrets.yaml is
+# encrypted for this key (see .sops.yaml); without it nothing can be decrypted.
+AGE_KEY ?= $(HOME)/.config/sops/age/keys.txt
+
+.PHONY: switch check build build-darwin rebuild update help ssh-keygen gen-key refresh-secrets
 
 default: rebuild
 
@@ -34,6 +38,19 @@ ssh-keygen:
 	@echo "public key:"
 	cat $(HOME)/.ssh/id_ed25519.pub
 	@echo "Add it where needed, then: sudo tailscale up --ssh"
+
+## gen-key — mint the shared sops age key (prints its public key; only for a deliberate rotation)
+gen-key:
+	mkdir -p $(dir $(AGE_KEY))
+	@test -f $(AGE_KEY) || nix shell nixpkgs#age -c age-keygen -o $(AGE_KEY)
+	@echo "age key:        $(AGE_KEY)"
+	@echo "public key:"
+	nix shell nixpkgs#age -c age-keygen -y $(AGE_KEY)
+	@echo "Add it to .sops.yaml (keys and key_groups), re-encrypt all secrets, then roll it out to every machine."
+
+## refresh-secrets — create/re-encrypt secrets/secrets.yaml with the .sops.yaml keys
+refresh-secrets:
+	nix shell nixpkgs#sops -c sops secrets/secrets.yaml
 
 ## check — evaluate every (nixos + darwin) configuration
 check:

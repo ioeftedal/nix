@@ -1,7 +1,10 @@
 {
   username = "ioe";
 
-  email = "***REMOVED***";
+  # GitHub no-reply identity — never a personal address.  The eduroam campus
+  # identity lives inside the sops-encrypted secrets (secrets/secrets.yaml),
+  # not in plaintext here.
+  email = "146436657+ioeftedal@users.noreply.github.com";
 
   repoDir = "/home/ioe/nixos";
 
