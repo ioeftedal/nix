@@ -28,7 +28,7 @@
       model = {
         provider = "custom";
         base_url = "http://localhost:11434/v1";
-        default = "qwen3.5:9b";
+        default = "gemma4:e4b";
         context_length = 65536;
       };
       platforms.signal.enabled = true;

@@ -26,7 +26,7 @@
       cudaArches = [ "61" ];
     };
     loadModels = [
-      "qwen3.5:9b"
+      "gemma4:e4b"
     ];
     environmentVariables.OLLAMA_CONTEXT_LENGTH = "65536";
   };
