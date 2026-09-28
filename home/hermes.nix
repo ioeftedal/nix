@@ -1,12 +1,14 @@
 # Hermes Agent, desktop-only (gated in home/default.nix): CLI/TUI plus the
-# Signal messaging gateway.  Run as a user service so sessions, skills and cron
-# live under ~/.hermes.  Signal is bridged via signal-cli in HTTP daemon mode.
+# gateway.  Run as a user service so sessions, skills and cron live under
+# ~/.hermes.
+#
+# Hardening: all terminal/file/code execution runs inside a persistent
+# hardened Docker sandbox container.
 {
   config,
   lib,
   pkgs,
   inputs,
-  osConfig,
   ...
 }: {
   imports = [
@@ -18,9 +20,6 @@
   services.hermes-agent = {
     enable = true;
     gateway.enable = true;
-    environmentFiles = [
-      osConfig.sops.secrets."hermes.env".path
-    ];
     settings = {
       # Fully local/offline model via the Ollama server next door.
       # qwen3.5:9b advertises 262k native context; 64k keeps the KV cache
@@ -29,34 +28,23 @@
         provider = "custom";
         base_url = "http://localhost:11434/v1";
         default = "gemma4:e4b";
-        context_length = 65536;
+        # context_length = 65536;
       };
-      platforms.signal.enabled = true;
-    };
-  };
 
-  home.packages = with pkgs; [
-    signal-cli
-  ];
+      # Sandbox every terminal/file/execute_code call in one long-lived,
+      # hardened Docker container (read-only rootfs, dropped caps,
+      # no-new-privs, PID/namespace isolation).  /workspace persists across
+      # sessions.  Needs the docker CLI in the unit PATH — provided below via
+      # extraPackages.
+      terminal = {
+        backend = "docker";
+        docker_image = "nikolaik/python-nodejs:python3.11-nodejs20";
+        container_persistent = true;
+      };
+    };
 
-  systemd.user.services.signal-cli = {
-    Unit = {
-      Description = "signal-cli daemon (HTTP mode) backing the Hermes Signal gateway";
-      After = [ "network-online.target" ];
-    };
-    Service = {
-      EnvironmentFile = [ osConfig.sops.secrets."hermes.env".path ];
-      ExecStart = "${pkgs.signal-cli}/bin/signal-cli --account \$SIGNAL_ACCOUNT daemon --http 127.0.0.1:8080";
-      Restart = "on-failure";
-      RestartSec = 5;
-    };
-    Install.WantedBy = [ "default.target" ];
-  };
-
-  systemd.user.services.hermes-agent = {
-    Unit = {
-      After = [ "signal-cli.service" ];
-      Wants = [ "signal-cli.service" ];
-    };
+    # docker CLI must be on the hermes gateway unit PATH to run the sandbox
+    # backend; the module's extraPackages feeds the unit PATH.
+    extraPackages = [ pkgs.docker ];
   };
 }
