@@ -64,24 +64,28 @@
   # --- Firmware (minimal) ----------------------------------------------------
   # Only the firmware this machine actually loads: MediaTek MT7925 wifi
   # (mediatek, top-level iwlwifi-cc-a0-*.ucode for the Intel AX200/211 variant),
-  # Intel i915 GPU + Intel BT (intel), SOF audio (own pkg).
+  # Intel i915 GPU + Intel BT (intel), SOF audio (own pkg), and Cirrus Logic
+  # CS35L56 speaker amplifiers (cirrus).
   # Filtering linux-firmware (837 MiB) + legacy sets (zd1211, ipw2200, rtl*,
   # alsa, libreelec-dvb) saves ~0.7 GiB.  Nvidia GSP + intel-npu firmware are
   # added by their own modules and are unaffected by this override.
+  # cirrus is required: snd_hda_scodec_cs35l56 loads its tuning .wmfw from
+  # there, and without it the two internal amps stay dead (headphones still
+  # work, speakers do not, since the amp is downstream of the ALC287 codec).
   hardware.enableRedistributableFirmware = lib.mkForce false;
   hardware.wirelessRegulatoryDatabase = true;
   hardware.cpu.intel.updateMicrocode = true;
   hardware.firmware = [
     (
       pkgs.runCommand "linux-firmware-minimal" {}
-      ''
-        mkdir -p $out/lib/firmware
-        for d in intel i915 mediatek; do
-          cp -rL "${pkgs.linux-firmware}/lib/firmware/$d" "$out/lib/firmware/"
-        done
-        cp -rL ${pkgs.linux-firmware}/lib/firmware/iwlwifi-cc-a0-*.ucode "$out/lib/firmware/"
-      ''
-    )
+        ''
+          mkdir -p $out/lib/firmware
+          for d in intel i915 mediatek cirrus; do
+            cp -rL "${pkgs.linux-firmware}/lib/firmware/$d" "$out/lib/firmware/"
+          done
+          cp -rL ${pkgs.linux-firmware}/lib/firmware/iwlwifi-cc-a0-*.ucode "$out/lib/firmware/"
+        ''
+      )
     pkgs.sof-firmware
   ];
 }
