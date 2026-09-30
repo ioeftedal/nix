@@ -90,6 +90,7 @@ in {
 
     exec autotiling-rs
 
+    exec firefox
     exec ghostty
     exec dunst
     exec wlsunset -l 54.0 -L -1.0
@@ -99,6 +100,7 @@ in {
 
     # Applications
     bindsym $mod+Return exec ghostty
+    bindsym $mod+Shift+Return exec firefox
     bindsym $mod+Space exec fuzzel
     bindsym $mod+R exec fuzzel
     bindsym $mod+W kill
