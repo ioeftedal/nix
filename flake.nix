@@ -46,7 +46,7 @@
         system = "x86_64-linux";
         user = "ioe";
       };
-      # Laptop (no discrete GPU).
+      # Laptop (Intel iGPU + Nvidia RTX 5060 dGPU).
       laptop = mkSystem "laptop" {
         system = "x86_64-linux";
         user = "ioe";
