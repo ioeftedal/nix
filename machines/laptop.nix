@@ -8,7 +8,14 @@
   pkgs,
   vars,
   ...
-}: {
+}: let
+  # pkgs.factorio defaults to the paid "alpha" release, whose tarball is only
+  # downloadable with a Factorio account token (needsAuth: true in nixpkgs'
+  # versions.json).  The "demo" release is published publicly, so it needs no
+  # credentials.  Capped playtime, and its saves are not compatible with the
+  # full game.
+  factorio = pkgs.factorio.override { releaseType = "demo"; };
+in {
   imports = [
     ./hardware/laptop.nix
   ];
@@ -34,6 +41,11 @@
   };
 
   programs.firefox.enable = true;
+
+  environment.systemPackages = [ factorio ];
+
+  # Hold on to the tarball so Nix never re-downloads it after a GC.
+  system.extraDependencies = [ factorio.src ];
 
   swapDevices = [
     {
