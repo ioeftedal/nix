@@ -7,6 +7,10 @@ set -euo pipefail
 SINK="@DEFAULT_AUDIO_SINK@"
 DEV="intel_backlight"
 NOTIFY_OPTS=(-a osd -t 1500 -u low)
+# PipeWire imposes no volume ceiling of its own (unlike PulseAudio, which
+# capped at 153%), so wpctl happily walks past 100% and the keybindings never
+# stop.  Clamp here instead.
+VOL_LIMIT=(--limit 1.0)
 
 volnotify() {
   local out pct
@@ -31,9 +35,9 @@ case "${1:-}" in
   vol)
     case "${2:-}" in
       mute) wpctl set-mute "$SINK" toggle ;;
-      +*) wpctl set-volume "$SINK" "${2#+}%+" ;;
-      -*) wpctl set-volume "$SINK" "${2#-}%-" ;;
-      *) wpctl set-volume "$SINK" "${2}%" ;;
+      +*) wpctl set-volume "${VOL_LIMIT[@]}" "$SINK" "${2#+}%+" ;;
+      -*) wpctl set-volume "${VOL_LIMIT[@]}" "$SINK" "${2#-}%-" ;;
+      *) wpctl set-volume "${VOL_LIMIT[@]}" "$SINK" "${2}%" ;;
     esac
     volnotify
     ;;
