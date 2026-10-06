@@ -55,10 +55,12 @@ in {
     output * bg ${c.wallpaper} fill
     output * scale 1.2
     # Both external monitors are 2560x1440 at scale 1.2 -> 2133 logical px wide.
-    # DP-6 is left (pos 0 0), DP-8 is right (pos 2133 0). Positions are in
-    # logical pixels; the two must not overlap or windows will bleed across.
-    output DP-6 pos 0 0
-    output DP-8 pos 2133 0
+    # J3RTVP3 is the physically-left panel (pos 0 0), CJDWVP3 the right one
+    # (pos 2133 0), laptop next (pos 4266 0). Positions are in logical pixels;
+    # the outputs must not overlap or windows will bleed across.
+    output "Dell Inc. DELL P2723D J3RTVP3" pos 0 0
+    output "Dell Inc. DELL P2723D CJDWVP3" pos 2133 0
+    output eDP-1 pos 4266 0
 
     # Appearance
     default_border pixel 2
@@ -90,7 +92,6 @@ in {
 
     exec autotiling-rs
 
-    exec firefox
     exec ghostty
     exec dunst
     exec wlsunset -l 54.0 -L -1.0
@@ -131,10 +132,10 @@ in {
     set $ws7  7
     set $ws8  8
     set $ws9  9
-    set $ws10 10
+    set $ws0  0
 
-    workspace 1 output DP-6
-    workspace 2 output DP-8
+    workspace 1 output "Dell Inc. DELL P2723D J3RTVP3" DP-7
+    workspace 2 output "Dell Inc. DELL P2723D CJDWVP3" DP-9
     workspace 0 output eDP-1
 
     bindsym $mod+1 workspace number $ws1
