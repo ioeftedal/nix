@@ -65,6 +65,8 @@
   #   nix shell nixpkgs#sops -c sops secrets/secrets.yaml
   # then `make rebuild`.
 
+  services.resolved.enable = true;
+
   # --- Tailscale mesh VPN ----------------------------------------------------
   services.tailscale.enable = true;
 
