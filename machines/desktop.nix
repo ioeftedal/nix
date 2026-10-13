@@ -14,6 +14,10 @@
   networking.hostName = "desktop";
   hardware.graphicsAccel = "nvidia";
 
+  # Docker daemon backing Hermes' sandboxed terminal backend (all agent
+  # terminal/file/code execution runs in a hardened container).
+  virtualisation.docker.enable = true;
+
   # Ollama server (desktop-only — only machine with a discrete GPU).  Backs
   # Hermes, which talks to it fully offline over the loopback endpoint.
   services.ollama = {
@@ -32,12 +36,11 @@
   };
 
   # Keep ioe's hermes gateway user service alive after logout.  Hermes is
-  # desktop-only: the sops secret below feeds its env file.
+  # desktop-only: sessions, skills and cron live under ~/.hermes.
   users.users.ioe.linger = true;
-  sops.secrets."hermes.env" = {
-    mode = "0600";
-    owner = "ioe";
-  };
+  # Docker group only (merges with wheel/video from modules/nixos/users.nix)
+  # so the sandboxed Hermes terminal backend can drive the daemon.
+  users.users.ioe.extraGroups = ["docker"];
 
   swapDevices = [
     {
