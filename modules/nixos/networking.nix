@@ -65,6 +65,21 @@
   #   nix shell nixpkgs#sops -c sops secrets/secrets.yaml
   # then `make rebuild`.
 
+  # --- systemd-resolved ------------------------------------------------------
+  # Tailscale (below) takes over name resolution on this machine.  Without
+  # systemd-resolved, tailscaled has no reliable way to learn the upstream
+  # resolvers NetworkManager/DHCP hands out — it only ever reads back the
+  # /etc/resolv.conf it wrote itself.  After a link/network change that leaves
+  # it forwarding every query to 100.100.100.100 with an empty upstream, so
+  # DNS returns SERVFAIL while raw IP connectivity keeps working (ping 8.8.8.8
+  # works, ping google.com does not).
+  #
+  # resolved gives Tailscale a proper D-Bus integration for reading/writing the
+  # system DNS config, lets NetworkManager feed it directly, and keeps MagicDNS
+  # working.  The resolved module also disables resolvconf and points NM at
+  # systemd-resolved automatically, so no other DNS option needs setting here.
+  services.resolved.enable = true;
+
   # --- Tailscale mesh VPN ----------------------------------------------------
   services.tailscale.enable = true;
 
