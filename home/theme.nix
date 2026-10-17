@@ -11,11 +11,12 @@
     miasma = import ./themes/miasma.nix;
     nord = import ./themes/nord.nix;
     fire-and-shadow = import ./themes/fire-and-shadow.nix;
+    aura = import ./themes/aura.nix;
   };
 in {
   options.theme = lib.mkOption {
     type = lib.types.enum (lib.attrNames themes);
-    default = "miasma";
+    default = "aura";
     description = "Active color theme. One of: ${lib.concatStringsSep ", " (lib.attrNames themes)}.";
   };
 
