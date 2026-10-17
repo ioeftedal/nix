@@ -8,6 +8,7 @@
   home.packages = with pkgs; [
     git
     git-get
+    gh
     sops
     age
     btop
