@@ -12,11 +12,14 @@
     nord = import ./themes/nord.nix;
     fire-and-shadow = import ./themes/fire-and-shadow.nix;
     aura = import ./themes/aura.nix;
+    coffee = import ./themes/coffee.nix;
+    alchemy = import ./themes/alchemy.nix;
+    catppuccin-mocha = import ./themes/catppuccin-mocha.nix;
   };
 in {
   options.theme = lib.mkOption {
     type = lib.types.enum (lib.attrNames themes);
-    default = "aura";
+    default = "coffee";
     description = "Active color theme. One of: ${lib.concatStringsSep ", " (lib.attrNames themes)}.";
   };
 
