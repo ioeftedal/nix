@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   vars,
@@ -22,6 +23,17 @@ in {
     # xwayland.enable = true;
     extraPackages = [];
   };
+
+  # Helium (ungoogled-chromium fork, upstream prebuilt tarball).  Pulled in as
+  # an overlay so it resolves as `pkgs.helium` in both the system and
+  # home-manager (which shares global pkgs) instead of a pinned package path.
+  nixpkgs.overlays = [
+    inputs.helium.overlays.default
+  ];
+
+  environment.systemPackages = [
+    pkgs.helium
+  ];
 
   programs.firefox.enable = true;
 

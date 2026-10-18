@@ -15,11 +15,12 @@
     coffee = import ./themes/coffee.nix;
     alchemy = import ./themes/alchemy.nix;
     catppuccin-mocha = import ./themes/catppuccin-mocha.nix;
+    hp = import ./themes/hp.nix;
   };
 in {
   options.theme = lib.mkOption {
     type = lib.types.enum (lib.attrNames themes);
-    default = "coffee";
+    default = "catppuccin-mocha";
     description = "Active color theme. One of: ${lib.concatStringsSep ", " (lib.attrNames themes)}.";
   };
 

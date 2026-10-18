@@ -35,6 +35,38 @@
     environmentVariables.OLLAMA_CONTEXT_LENGTH = "65536";
   };
 
+  # Amp headless runner: one runner serving every checkout under
+  # ~/repositories/github.com.  Repositories are listed explicitly (not globbed
+  # at start) so a runner only ever serves what it is meant to, and so adding a
+  # checkout is a config change rather than a silent broadening of what
+  # ampcode.com can start threads in.
+  services.amp-runners = {
+    enable = true;
+    user = vars.username;
+
+    runners.ioe.repos = [
+      "eik-lab/patronus-turret-software"
+      "epicgames/raddebugger"
+      "ioeftedal/bipbop"
+      "ioeftedal/cs-app"
+      "ioeftedal/hedwig"
+      "ioeftedal/kalman-cpp"
+      "ioeftedal/leetcode-rust"
+      "ioeftedal/me"
+      "ioeftedal/multiplayer-server-test"
+      "ioeftedal/pareidolia"
+      "ioeftedal/pong-cpp"
+      "ioeftedal/profiling"
+      "ioeftedal/space_invaders"
+      "ioeftedal/space-invaders-cpp"
+      "ioeftedal/STAT351"
+      "ioeftedal/tasyper"
+      "ioeftedal/test-jujutsu"
+      "ioeftedal/udp_gstreamer"
+      "ioeftedal/zauron"
+    ];
+  };
+
   # Keep ioe's hermes gateway user service alive after logout.  Hermes is
   # desktop-only: sessions, skills and cron live under ~/.hermes.
   users.users.ioe.linger = true;

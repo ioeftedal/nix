@@ -69,7 +69,7 @@ build-darwin:
 
 ## rebuild — rebuild and switch current host with nh
 rebuild:
-	nh os switch --hostname $(HOST) /home/ioe/nixos
+	nh os switch --hostname $(HOST) --no-nom /home/ioe/nixos
 
 ## update — refresh all inputs and re-check
 update:

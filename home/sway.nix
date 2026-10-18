@@ -101,7 +101,7 @@ in {
 
     # Applications
     bindsym $mod+Return exec ghostty
-    bindsym $mod+Shift+Return exec firefox
+    bindsym $mod+Shift+Return exec helium
     bindsym $mod+Space exec fuzzel
     bindsym $mod+R exec fuzzel
     bindsym $mod+W kill

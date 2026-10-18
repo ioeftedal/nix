@@ -1,5 +1,6 @@
 {
   imports = [
+    ./amp.nix
     ./base.nix
     ./desktop.nix
     ./determinate.nix
