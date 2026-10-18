@@ -20,19 +20,34 @@
 
   # Ollama server (desktop-only — only machine with a discrete GPU).  Backs
   # Hermes, which talks to it fully offline over the loopback endpoint.
+  #
+  # Accelerated through Vulkan, not CUDA.  The GTX 1080 Ti is Pascal (compute
+  # capability 6.1) and nixpkgs ships CUDA 13, which dropped every pre-Turing
+  # target — `nvcc` fails with "Unsupported gpu architecture 'compute_61'", so
+  # no `ollama-cuda` build can target this card.  Pascal has no such cliff in
+  # Vulkan: the 580 driver still supports it, so ggml's Vulkan compute
+  # backend runs here.
   services.ollama = {
     enable = true;
     host = "127.0.0.1";
     port = 11434;
-    # GTX 1080 Ti is Pascal (compute capability 6.1); nixpkgs' default CUDA
-    # arches may omit it, so build a binary that includes it explicitly.
-    package = pkgs.ollama-cuda.override {
-      cudaArches = [ "61" ];
-    };
+    package = pkgs.ollama-vulkan;
     loadModels = [
       "gemma4:e4b"
     ];
-    environmentVariables.OLLAMA_CONTEXT_LENGTH = "65536";
+    environmentVariables = {
+      OLLAMA_CONTEXT_LENGTH = "65536";
+      # The package is meant to ship a wrapper that sets this, but nixpkgs only
+      # puts makeBinaryWrapper in nativeBuildInputs for the rocm/cuda variants,
+      # so for ollama-vulkan the wrapProgram call is a silent no-op and the
+      # binary lands unwrapped.  Set it here instead.
+      OLLAMA_VULKAN = "1";
+      # The Vulkan ICD ships inside the NVIDIA driver package, and its
+      # library_path is an absolute store path.  Hand the loader that path
+      # directly so the server finds the GPU regardless of what the system
+      # profile happens to link into /run/current-system/sw/share/vulkan.
+      VK_DRIVER_FILES = "${config.hardware.nvidia.package}/share/vulkan/icd.d/nvidia_icd.json";
+    };
   };
 
   # Keep ioe's hermes gateway user service alive after logout.  Hermes is
