@@ -61,24 +61,8 @@
 
     runners.ioe.repos = [
       "eik-lab/patronus-turret-software"
-      "epicgames/raddebugger"
-      "ioeftedal/bipbop"
-      "ioeftedal/cs-app"
-      "ioeftedal/hedwig"
-      "ioeftedal/kalman-cpp"
-      "ioeftedal/leetcode-rust"
-      "ioeftedal/me"
-      "ioeftedal/multiplayer-server-test"
       "ioeftedal/pareidolia"
-      "ioeftedal/pong-cpp"
-      "ioeftedal/profiling"
-      "ioeftedal/space_invaders"
-      "ioeftedal/space-invaders-cpp"
-      "ioeftedal/STAT351"
-      "ioeftedal/tasyper"
-      "ioeftedal/test-jujutsu"
-      "ioeftedal/udp_gstreamer"
-      "ioeftedal/zauron"
+      "ioeftedal/kalman-cpp"
     ];
   };
 
